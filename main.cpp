@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 #include <curses.h>
 #include <panel.h>
-#include <filesystem>
 
 #include <drawMainMenu.cpp>
 
