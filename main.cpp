@@ -2,7 +2,7 @@
 #include <curses.h>
 #include <panel.h>
 
-#include "menu_drawer/drawMainMenu.cpp"
+#include "menu_drawer/MainMenu.cpp"
 
 #define ACFOLDER "E:\\games\\SteamLibrary\\steamapps\\common\\assettocorsa"
 

@@ -1,5 +1,5 @@
 #include "menu.h"
-#include "drawCarMenu.cpp" // Include the CarMenu class
+#include "CarMenu.cpp" // Include the CarMenu class
 
 class MainMenu : public Menu {
     private:
@@ -8,7 +8,8 @@ class MainMenu : public Menu {
     public:
         MainMenu(const std::filesystem::path &acpath, WINDOW *win) : Menu(win) {
             this->acpath = acpath;
-            this->acpath /= "content/cars";
+            this->acpath /= "content";
+            this->acpath /= "cars";
             
             for (const auto &entry : std::filesystem::directory_iterator(this->acpath)) {
                 if (entry.is_directory()) {

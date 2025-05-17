@@ -58,7 +58,7 @@ class Menu {
             wprintw(win, "     %s \n", message.c_str());
         }
 
-        void printItems() {
+        virtual void printItems() {
             for (int i = start; i < std::min(start + maxVisible, (int)items.size()); ++i) {
                 if (i == highlight) {
                     mvwprintw(win, i - start + 4, 1, "--> %s", items[i].c_str());
