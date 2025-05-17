@@ -70,13 +70,13 @@ class Menu {
 
         bool confirmExit() {
             wclear(win);
-            mvwprintw(win, (maxy/2), (maxx/2 - 18), 
-                "Are you sure you want to go exit? (y/n)");
+            mvwprintw(win, (maxy/2)-1, (maxx/2) - 17, 
+                "Are you sure you want to exit? (y/n)");
             wrefresh(win);
             int ch = wgetch(win);
-            if (ch == 'y' || ch == 'Y') {
+            if (ch == 'y' || ch == 'Y' || ch == 10) {
                 return true;
-            } else if (ch == 'n' || ch == 'N') {
+            } else if (ch == 'n' || ch == 'N' || ch == 27) {
                 return false;
             } else {
                 return confirmExit(); // Recursive call for invalid input
