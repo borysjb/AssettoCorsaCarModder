@@ -24,13 +24,13 @@ class Engine {
     double boost;
     double wastegate;
     double maxDisplayBoost;
-    double maxBoostRPM;
+    int maxBoostRPM;
     double BoostGamma;
     bool boostAdjustable;
 
     double turboThreshold;
     double turboDamage;
-    double RPMThreshold;
+    int RPMThreshold;
     double RPMDamage;
 
     public:
@@ -47,35 +47,37 @@ class Engine {
     }
     
     void getAttributeList(std::map<std::string, std::string> &attributes) {
-        attributes["Torque Curve"] = torqueFile;
+        attributes["Torque curve File"] = torqueFile;
         attributes["Altitude Sensitivity"] = std::to_string(altitudeSens);
         attributes["Inertia"] = std::to_string(inertia);
         attributes["Idle RPM"] = std::to_string(idleRPM);
         attributes["Redline RPM"] = std::to_string(redlineRPM);
         attributes["Limiter HZ"] = std::to_string(limiterHZ);
-        attributes["Coast Reference"] = std::to_string(coastReference);
+        attributes["Coast Reference RPM"] = std::to_string(coastReference);
         attributes["Coast Torque"] = std::to_string(coastTorque);
         attributes["Coast Nonlinearity"] = std::to_string(coastNonlinearity);
-        attributes["Turbo Lag Up"] = std::to_string(turboLagUp);
-        attributes["Turbo Lag Down"] = std::to_string(turboLagDown);
-        attributes["Boost"] = std::to_string(boost);
-        attributes["Wastegate"] = std::to_string(wastegate);
-        attributes["Max Display Boost"] = std::to_string(maxDisplayBoost);
-        attributes["Max Boost RPM"] = std::to_string(maxBoostRPM);
+        attributes["Turbo Lag Spooling Up"] = std::to_string(turboLagUp);
+        attributes["Turbo Lag Spooling Down"] = std::to_string(turboLagDown);
+        attributes["Max Boost"] = std::to_string(boost);
+        attributes["Wastegate Pressure"] = std::to_string(wastegate);
+        attributes["Max Display Boost (for use in game UI)"] = std::to_string(maxDisplayBoost);
+        attributes["RPM at which max boost is reached"] = std::to_string(maxBoostRPM);
         attributes["Boost Gamma"] = std::to_string(BoostGamma);
-        attributes["Boost adjustable from cockpit"] = boostAdjustable ? "Yes" : "No";
-        attributes["Turbo damage threshold"] = std::to_string(turboThreshold);
+        attributes["Boost adjustable from cockpit?"] = boostAdjustable ? "Yes" : "No";
+        attributes["Turbo damage threshold pressure"] = std::to_string(turboThreshold);
         attributes["Turbo damage factor"] = std::to_string(turboDamage);
-        attributes["RPM damage threshold"] = std::to_string(RPMThreshold);
-        attributes["RPM damage factor"] = std::to_string(RPMDamage);
+        attributes["Engine damage threshold RPM"] = std::to_string(RPMThreshold);
+        attributes["Overrev damage factor"] = std::to_string(RPMDamage);
     }
 
     private:
 
         void parseEngineFile() {
             std::string line;
-            std::ifstream file(carpath / "engine.ini");  // Add "data" subfolder
-            if (!file.is_open()) {
+            std::ifstream file;
+            try{
+                std::ifstream file(carpath / "engine.ini");  // Add "data" subfolder
+            } catch (const std::exception &e) {
                 throw std::runtime_error("Could not open engine.ini file");
             }
 
@@ -102,7 +104,7 @@ class Engine {
                 value.erase(0, value.find_first_not_of(" \t"));
                 value.erase(value.find_last_not_of(" \t") + 1);
 
-                for (int i = 0 ; i < 7; ++i) {
+                for (int i = 0 ; i < 9; ++i) {
                     if (key == engineInts[i]) {
                         switch (i) {
                             case 0: idleRPM = std::stoi(value); break;
@@ -112,26 +114,25 @@ class Engine {
                             case 4: coastTorque = std::stoi(value); break;
                             case 5: coastNonlinearity = std::stoi(value); break;
                             case 6: boostAdjustable = value == "1"; break;
+                            case 7: maxBoostRPM = std::stoi(value); break;
+                            case 8: RPMThreshold = std::stoi(value); break;
                             default: break;
                         }
                     }
                 }
-                for (int i = 0 ; i < 13; ++i) {
+                for (int i = 0 ; i < 10; ++i) {
                     if(key == engineDoubles[i]) {
                         switch (i) {
                             case 0: altitudeSens = std::stod(value); break;
                             case 1: inertia = std::stod(value); break;
                             case 2: turboLagDown = std::stod(value); break;
                             case 3: turboLagUp = std::stod(value); break;
-                            case 4: maxBoostRPM = std::stod(value); break;
-                            case 5: wastegate = std::stod(value); break;
-                            case 6: maxDisplayBoost = std::stod(value); break;
-                            case 7: boost = std::stod(value); break;
-                            case 8: BoostGamma = std::stod(value); break;
-                            case 9: turboThreshold = std::stod(value); break;
-                            case 10: turboDamage = std::stod(value); break;
-                            case 11: RPMThreshold = std::stod(value); break;
-                            case 12: RPMDamage = std::stod(value); break;
+                            case 4: wastegate = std::stod(value); break;
+                            case 5: maxDisplayBoost = std::stod(value); break;
+                            case 6: BoostGamma = std::stod(value); break;
+                            case 7: turboThreshold = std::stod(value); break;
+                            case 8: turboDamage = std::stod(value); break;
+                            case 9: RPMDamage = std::stod(value); break;
                             default: break;
                         }
                     }

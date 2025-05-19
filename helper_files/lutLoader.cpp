@@ -2,8 +2,10 @@
 
 void lutLoader(const std::filesystem::path &lutpath, std::map<int,int> &map) {
     std::string line;
-    std::ifstream file(lutpath);
-    if (!file.is_open()) {
+    std::ifstream file;
+    try{
+        std::ifstream file(lutpath);
+    } catch (const std::exception &e) {
         throw std::runtime_error("Could not open power.lut file");
     }
 
@@ -32,9 +34,7 @@ void lutLoader(const std::filesystem::path &lutpath, std::map<int,int> &map) {
         value.erase(value.find_last_not_of(" \t") + 1);
 
         // Parse the values
-        int rpm = std::stoi(key);
-        int torque = std::stoi(value);
-        map[rpm] = torque;
+        map[std::stoi(key)] = std::stoi(value);
     }
     file.close();
 }

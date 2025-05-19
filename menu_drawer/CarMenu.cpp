@@ -9,6 +9,7 @@ private:
 public:
     CarMenu(const std::filesystem::path &carpath, const std::string &carname, WINDOW *win) 
         : Menu(win) {
+        this->carname = carname;
         this->carpath = carpath;
         this->carpath /= "data";
         
@@ -67,7 +68,9 @@ protected:
                     // Misc misc(carpath, carname, win);
                     break;
                 case 8: // Exit
-                    exit = true;
+                    if (confirmExit()) {
+                        exit = true;
+                    }
                     break;
             }
         } catch (const std::exception &e) {
