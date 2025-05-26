@@ -33,21 +33,15 @@ class EngineMenu : public Menu {
             wprintw(win, "\n     Engine settings of: %s\n", carname.c_str());
             wprintw(win, "     Press UP/DOWN to navigate\n");
             //engine.printDebug(win);
-            wprintw(win, "     -----------------------\n");
+            wprintw(win, "     ----------------------- %d\n", engine.getTestValue());
         }
         
         void printItems() override {
-            int ctr = 0;
-            for (const auto &i : engineSettingNames) {
-                if (ctr == highlight) {
-                    mvwprintw(win, ctr - start + 4, 1, "--> ");
-                } 
-                mvwprintw(win, ctr - start + 4, 5, "%s: %s",ctr, i.c_str(), attributes[i].c_str());
-                
-                ++ctr;
-                if (ctr >= std::min(start + maxVisible, (int)attributes.size())) {
-                    break;
+            for (int i = start; i < std::min(start + maxVisible, (int)items.size()); ++i) {
+                if (i == highlight) {
+                    mvwprintw(win, i - start + 4, 1, "-->");
                 }
+                mvwprintw(win, i - start + 4, 5, "%s: %s", engineSettingNames[i].c_str(), attributes[engineSettingNames[i]].c_str());
             }
         }
 };

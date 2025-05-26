@@ -32,6 +32,7 @@ std::string engineDoubles[] = {
 };
 
 std::string engineSettingNames[] = {
+    "Torque curve File",
     "Altitude Sensitivity",
     "Inertia",
     "Idle RPM",

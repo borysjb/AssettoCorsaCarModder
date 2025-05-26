@@ -45,6 +45,10 @@ class Engine {
     std::map<int, int> getTorqueCurve() {
         return torqueCurve;
     }
+
+    int getTestValue() {
+        return redlineRPM;
+    }
     
     void getAttributeList(std::map<std::string, std::string> &attributes) {
         attributes["Torque curve File"] = torqueFile;
