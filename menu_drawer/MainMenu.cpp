@@ -8,8 +8,6 @@ class MainMenu : public Menu {
     public:
         MainMenu(const std::filesystem::path &acpath, WINDOW *win) : Menu(win) {
             this->acpath = acpath;
-            this->acpath /= "content";
-            this->acpath /= "cars";
             
             for (const auto &entry : std::filesystem::directory_iterator(this->acpath)) {
                 if (entry.is_directory()) {
@@ -31,7 +29,7 @@ class MainMenu : public Menu {
         void printHeader() override {
             wprintw(win, "\n     Select the car to modify\n");
             wprintw(win, "     Press UP/DOWN to navigate, ENTER to select, ESC to exit.\n");
-            wprintw(win, "     ----------------------------------------\n");
+            wprintw(win, "     ---------------------------------------- %s\n", acpath.string());
         }
 
     void enterCarMenu() {

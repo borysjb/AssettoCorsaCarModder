@@ -78,12 +78,7 @@ class Engine {
 
         void parseEngineFile() {
             std::string line;
-            std::ifstream file;
-            try{
-                std::ifstream file(carpath / "engine.ini");  // Add "data" subfolder
-            } catch (const std::exception &e) {
-                throw std::runtime_error("Could not open engine.ini file");
-            }
+            std::ifstream file(carpath / "engine.ini");  // Add "data" subfolder
 
             while(getline(file, line)) {
                 // Skip comments and empty lines

@@ -4,19 +4,12 @@
 
 #include "menu_drawer/MainMenu.cpp"
 
-#define ACFOLDER "E:\\games\\SteamLibrary\\steamapps\\common\\assettocorsa"
+#define ACFOLDER "E:/games/SteamLibrary/steamapps/common/assettocorsa"
 
 int main() {
-    std::filesystem::path path = (std::filesystem::path)ACFOLDER;
-    std::vector<std::string> carNames;
-    for (const auto &entry : std::filesystem::directory_iterator(path)) {
-        if (entry.is_directory()) {
-            std::string carName = entry.path().filename().string();
-            carNames.push_back(carName);
-        }
-    }
-
-
+    std::filesystem::path path;
+    path = "content";
+    path /= "cars";
     initscr();
     noecho();
     cbreak();

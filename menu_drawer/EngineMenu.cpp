@@ -12,7 +12,6 @@ class EngineMenu : public Menu {
 
         EngineMenu(const std::filesystem::path &carpath, const std::string &carname, WINDOW *win)
             : Menu(win) {
-            try{
             this->carname = carname;
             this->carpath = carpath;
             engine = Engine(carpath);
@@ -20,11 +19,6 @@ class EngineMenu : public Menu {
             engine.getAttributeList(attributes);
             for (const auto &[k,v]:attributes) {
                 items.push_back(k);
-            }
-            } catch (const std::exception &e) {
-                printFooter(e.what());
-                wrefresh(win);
-                std::this_thread::sleep_for(std::chrono::seconds(2)); // Pause for 2 seconds
             }
         }
     protected:

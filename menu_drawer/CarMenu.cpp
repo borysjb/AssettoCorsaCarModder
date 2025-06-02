@@ -11,7 +11,6 @@ public:
         : Menu(win) {
         this->carname = carname;
         this->carpath = carpath;
-        this->carpath /= "data";
         
         items.push_back("General Settings");
         items.push_back("Drivetrain/Engine Settings");
@@ -29,7 +28,7 @@ protected:
         wprintw(win, "\n     Car: %s\n", 
                 carname.c_str());
         wprintw(win, "     Press UP/DOWN to navigate, ENTER to select, ESC to exit.\n");
-        wprintw(win, "     ----------------------------------------\n");
+        wprintw(win, "     %s \n", carpath.c_str());
     }
 
     void handleInput(int ch) override {
@@ -82,7 +81,9 @@ protected:
 
     void enterEngineMenu() {
         try {
-            EngineMenu engineMenu(carpath, carname, win);
+            std::filesystem::path path = carpath;
+            path /= "data";
+            EngineMenu engineMenu(path, carname, win);
             engineMenu.draw();
         } catch (const std::exception &e) {
             printFooter(e.what());
