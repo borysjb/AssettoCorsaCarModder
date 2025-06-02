@@ -28,7 +28,7 @@ protected:
         wprintw(win, "\n     Car: %s\n", 
                 carname.c_str());
         wprintw(win, "     Press UP/DOWN to navigate, ENTER to select, ESC to exit.\n");
-        wprintw(win, "     %s \n", carpath.c_str());
+        wprintw(win, "     --------------------------------------------------------\n");
     }
 
     void handleInput(int ch) override {
@@ -40,6 +40,7 @@ protected:
     }
 
     void enterSubMenu() {
+
         try {
             switch (highlight) {
                 case 0: // General Settings
@@ -75,20 +76,14 @@ protected:
         } catch (const std::exception &e) {
             printFooter(e.what());
             wrefresh(win);
-            std::this_thread::sleep_for(std::chrono::seconds(2)); // Pause for 2 seconds
+            std::this_thread::sleep_for(std::chrono::seconds(1)); // Pause for 2 seconds
         }
     }
 
     void enterEngineMenu() {
-        try {
             std::filesystem::path path = carpath;
             path /= "data";
             EngineMenu engineMenu(path, carname, win);
             engineMenu.draw();
-        } catch (const std::exception &e) {
-            printFooter(e.what());
-            wrefresh(win);
-            std::this_thread::sleep_for(std::chrono::seconds(2)); // Pause for 2 seconds
-        }
     }
 };

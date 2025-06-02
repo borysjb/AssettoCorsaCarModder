@@ -29,17 +29,22 @@ class MainMenu : public Menu {
         void printHeader() override {
             wprintw(win, "\n     Select the car to modify\n");
             wprintw(win, "     Press UP/DOWN to navigate, ENTER to select, ESC to exit.\n");
-            wprintw(win, "     ---------------------------------------- %s\n", acpath.string());
+            wprintw(win, "     ----------------------------------------\n");
         }
 
     void enterCarMenu() {
         try {
-            CarMenu carmenu(acpath / items[highlight], items[highlight], win);
+            std::filesystem::path checkpath = acpath / items[highlight] / "data" / "engine.ini";
+            std::ifstream file(checkpath);  //check a mandatory file to throw no data folder as early as possible
+             if(!file.good()) {
+                throw std::runtime_error("No data folder");
+            }
+            EngineMenu carmenu(acpath / items[highlight] / "data", items[highlight], win);
             carmenu.draw();
         } catch (const std::exception &e) {
             printFooter(e.what());
             wrefresh(win);
-            std::this_thread::sleep_for(std::chrono::seconds(2)); // Pause for 2 seconds
+            std::this_thread::sleep_for(std::chrono::seconds(1)); // Pause for 2 seconds
         }
     }
 

@@ -32,7 +32,7 @@ class Menu {
         }
     
     protected:
-        virtual void printHeader() =0;
+        virtual void printHeader() = 0;
 
         virtual void handleInput(int ch) {
             switch (ch) {
