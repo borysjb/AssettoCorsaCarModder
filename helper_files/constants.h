@@ -31,6 +31,33 @@ std::string engineDoubles[] = {
     "RPM_DAMAGE_K"
 };
 
+std::string engineSets[] = {
+    "ALTITUDE_SENSITIVITY",
+    "INERTIA",
+
+    "MINIMUM",
+    "LIMITER",
+    "LIMITER_HZ",
+
+    "RPM",
+    "TORQUE",
+    "NON_LINEARITY",
+
+    "LAG_DN",
+    "LAG_UP",
+    "MAX_BOOST",
+    "WASTEGATE",
+    "DISPLAY_MAX_BOOST",
+    "REFERENCE_RPM",
+    "GAMMA",
+    "COCKPIT_ADJUSTABLE",
+
+    "TURBO_BOOST_THRESHOLD",
+    "TURBO_DAMAGE_K",
+    "RPM_THRESHOLD",
+    "RPM_DAMAGE_K"
+};
+
 std::string engineSettingNames[] = {
     "Torque curve File",
     "Altitude Sensitivity",

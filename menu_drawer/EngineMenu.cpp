@@ -45,6 +45,8 @@ class EngineMenu : public Menu {
                 case 's':
                     confirmSave();
                     break;
+                case 10: //Enter key
+                    engine.modValue(highlight);
                 default:
                     Menu::handleInput(ch);
             }

@@ -3,14 +3,13 @@
 #include "../helper_files/lutLoader.cpp"
 #include "../helper_files/constants.h"
 
-std::string engineFile = "[HEADER]\nVERSION=1\nPOWER_CURVE=power.lut			; power curve file\nCOAST_CURVE=FROM_COAST_REF 		; coast curve. can define 3 different options (coast reference, coast values for mathematical curve, coast curve file)\n\n[ENGINE_DATA]\nALTITUDE_SENSITIVITY=%f		; sensitivity to altitude\nINERTIA=%f					; engine inertia\nMINIMUM=%d					; engine idle rpm\nLIMITER=%d					; engine rev limiter. 0 no limiter\nLIMITER_HZ=%d\n\n[COAST_REF]\nRPM=%d						; rev number reference\nTORQUE=%d						; engine braking torque value in Nm at rev number reference\nNON_LINEARITY=%f					; coast engine brake from ZERO to TORQUE value at rpm with linear (0) to fully exponential (1)\n\n[COAST_DATA]\nCOAST0=0						; \nCOAST1=0\nCOAST=0.0000015\n\n[COAST_CURVE]\nFILENAME=coast.lut				; coasting curve file\n\n[TURBO_0]\nLAG_DN=%f 				; Interpolation lag used slowing down the turbo\nLAG_UP=%f\nMAX_BOOST=%f \nWASTEGATE=%f \nDISPLAY_MAX_BOOST=%f		; Value used by display apps\nREFERENCE_RPM=%d			; The reference rpm where the turbo reaches maximum boost (at max gas pedal). \nGAMMA=%f\nCOCKPIT_ADJUSTABLE=%d\n\n[DAMAGE]\nTURBO_BOOST_THRESHOLD=%f\nTURBO_DAMAGE_K=%f			; amount of damage per second per (boost - threshold)\nRPM_THRESHOLD=%d			; RPM at which the engine starts to take damage\nRPM_DAMAGE_K=%f			; amount of damage per second per (rpm-threshold)\n";
 
 class Engine {
     std::filesystem::path carpath;
     std::string torqueFile;
     std::map<int, int> torqueCurve;
-    
-    
+    //std::vector<double> settings;
+
     double altitudeSens;
     double inertia;
     int idleRPM;
@@ -53,6 +52,11 @@ class Engine {
     }
     
     void getAttributeList(std::map<std::string, std::string> &attributes) {
+        /*int ctr=0;
+        for(std::string a:engineSettingNames) {
+            attributes[a] = std::to_string(settings[ctr]);
+            ++ctr;
+        }*/
         attributes["Torque curve File"] = torqueFile;
         attributes["Altitude Sensitivity"] = std::to_string(altitudeSens);
         attributes["Inertia"] = std::to_string(inertia);
@@ -105,6 +109,13 @@ class Engine {
                 // Trim whitespace
                 value.erase(0, value.find_first_not_of(" \t"));
                 value.erase(value.find_last_not_of(" \t") + 1);
+                /*int ctr;
+                for (std::string a:engineSets) {
+                    if (key==a) {
+                        settings[ctr] = std::stod(value);
+                    }
+                    ++ctr;
+                }*/
 
                 for (int i = 0 ; i < 9; ++i) {
                     if (key == engineInts[i]) {
@@ -147,10 +158,15 @@ class Engine {
     public:
     
         void writeToEngineFile() {
-            FILE *file;
             std::filesystem::path filepath = carpath / "engine.ini";
-            file = fopen(filepath.string().c_str() , "w");
-            fprintf(file, engineFile.c_str(), altitudeSens, inertia, idleRPM, redlineRPM, limiterHZ, coastReference, coastTorque, coastNonlinearity, turboLagUp, turboLagDown, boost, wastegate, maxDisplayBoost, maxBoostRPM, BoostGamma, boostAdjustable, turboThreshold, turboDamage, RPMThreshold, RPMDamage);
+            std::ofstream file;
+            file.open(filepath);
+            file << "[HEADER]\nVERSION=1\nPOWER_CURVE=power.lut			; power curve file\nCOAST_CURVE=FROM_COAST_REF 		; coast curve. can define 3 different options (coast reference, coast values for mathematical curve, coast curve file)\n\n[ENGINE_DATA]\nALTITUDE_SENSITIVITY=" << altitudeSens <<"		; sensitivity to altitude\nINERTIA="
+            <<inertia<<"					; engine inertia\nMINIMUM="<<idleRPM<<"					; engine idle rpm\nLIMITER="<<redlineRPM<<"					; engine rev limiter. 0 no limiter\nLIMITER_HZ="<<limiterHZ<<
+            "\n\n[COAST_REF]\nRPM="<<coastReference<<"						; rev number reference\nTORQUE="<<coastTorque<<"						; engine braking torque value in Nm at rev number reference\nNON_LINEARITY="<<
+            coastNonlinearity<<"				; coast engine brake from ZERO to TORQUE value at rpm with linear (0) to fully exponential (1)\n\n[COAST_DATA]\nCOAST0=0						; \nCOAST1=0\nCOAST=0.0000015\n\n[COAST_CURVE]\nFILENAME=coast.lut				; coasting curve file\n\n[TURBO_0]\nLAG_DN="<<
+            turboLagDown<<" 				; Interpolation lag used slowing down the turbo\nLAG_UP="<<turboLagUp<<"\nMAX_BOOST="<<boost<<" \nWASTEGATE="<<wastegate<<" \nDISPLAY_MAX_BOOST="<<maxDisplayBoost<<"		; Value used by display apps\nREFERENCE_RPM="<<maxBoostRPM<<"			; The reference rpm where the turbo reaches maximum boost (at max gas pedal). \nGAMMA="<<
+            BoostGamma<<"\nCOCKPIT_ADJUSTABLE="<<boostAdjustable<<"\n\n[DAMAGE]\nTURBO_BOOST_THRESHOLD="<<turboThreshold<<"\nTURBO_DAMAGE_K="<<turboDamage<<"			; amount of damage per second per (boost - threshold)\nRPM_THRESHOLD="<<RPMThreshold<<"			; RPM at which the engine starts to take damage\nRPM_DAMAGE_K="<<RPMDamage<<"			; amount of damage per second per (rpm-threshold)\n";
         }
 
         // Add debug method to verify parsing
@@ -160,5 +176,12 @@ class Engine {
             wprintw(win, "\nIdle: %d", idleRPM);
             wprintw(win, "\nBoost: %.2f", boost);
             wprintw(win, "\nInertia: %.3f", inertia);
+        }
+
+        void modValue(int item) {
+            std::string itemname = engineSettingNames[item];
+            if (item == 0) {
+                return;
+            }
         }
 };
