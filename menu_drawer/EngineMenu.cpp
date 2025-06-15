@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "../car_files/Engine.cpp"
+#include "TorqueMenu.cpp"
 
 class EngineMenu : public Menu {
     private:
@@ -26,8 +27,8 @@ class EngineMenu : public Menu {
         void printHeader() override {
             wprintw(win, "\n     Engine settings of: %s\n", carname.c_str());
             wprintw(win, "     Press UP/DOWN to navigate, press S to save changes \n");
+            wprintw(win, "     Press ENTER to modify a setting, ESC to exit.\n");
             //engine.printDebug(win);
-            wprintw(win, "     ----------------------- %d\n", engine.getTestValue());
         }
         
         void printItems() override {
@@ -46,7 +47,20 @@ class EngineMenu : public Menu {
                     confirmSave();
                     break;
                 case 10: //Enter key
-                    engine.modValue(highlight);
+                    if(highlight == 0) {
+                        try {
+                            TorqueMenu torqueMenu(carpath, carname, win, engine);
+                            torqueMenu.draw();
+                        } catch (const std::exception &e) {
+                            printFooter(e.what());
+                            wrefresh(win);
+                            std::this_thread::sleep_for(std::chrono::seconds(1)); // Pause for 2 seconds
+                        }
+                    } else {
+                        engine.modValue(highlight); // -1 because first item is not a setting
+                        engine.getAttributeList(attributes); // Refresh attributes after modification
+                    }
+                    break;
                 default:
                     Menu::handleInput(ch);
             }

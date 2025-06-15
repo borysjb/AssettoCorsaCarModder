@@ -2,14 +2,11 @@
 
 void lutLoader(const std::filesystem::path &lutpath, std::map<int,int> &map) {
     std::string line;
-    std::ifstream file;
-    try{
-        std::ifstream file(lutpath);
-    } catch (const std::exception &e) {
+    std::ifstream file(lutpath);
+    if (!file.is_open()) {
         throw std::runtime_error("Could not open power.lut file");
     }
-
-
+    
     while(getline(file, line)) {
         // Skip comments and empty lines
         if (line.empty() || line[0] == ';' || line[0] == '[') {

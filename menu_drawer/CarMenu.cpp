@@ -40,7 +40,6 @@ protected:
     }
 
     void enterSubMenu() {
-
         try {
             switch (highlight) {
                 case 0: // General Settings
@@ -76,14 +75,20 @@ protected:
         } catch (const std::exception &e) {
             printFooter(e.what());
             wrefresh(win);
-            std::this_thread::sleep_for(std::chrono::seconds(1)); // Pause for 2 seconds
+            std::this_thread::sleep_for(std::chrono::seconds(2)); 
         }
     }
 
     void enterEngineMenu() {
-            std::filesystem::path path = carpath;
-            path /= "data";
+        std::filesystem::path path = carpath;
+        path /= "data";
+        try {
             EngineMenu engineMenu(path, carname, win);
             engineMenu.draw();
+        } catch (const std::exception& e) {
+            printFooter(e.what());
+            wrefresh(win);
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        }
     }
 };
