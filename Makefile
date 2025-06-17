@@ -1,2 +1,2 @@
 simplemake: main.cpp C:\msys64\mingw64\lib\pdcurses.dll
-	g++ -o E:\games\SteamLibrary\steamapps\common\assettocorsa\ACarModder.exe main.cpp C:\msys64\mingw64\lib\pdcurses.dll -I C:\msys64\mingw64\include -I .
+	g++ -std=c++23 -o E:\games\SteamLibrary\steamapps\common\assettocorsa\ACarModder.exe main.cpp C:\msys64\mingw64\lib\pdcurses.dll -I C:\msys64\mingw64\include -I .

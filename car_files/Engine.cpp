@@ -7,6 +7,7 @@ class Engine {
     std::filesystem::path carpath;
     std::vector<double> settings = std::vector<double>(21, 0.0); // Vector to hold engine settings
     // Initialize with 20 zeros
+    std::set<int> engineInts = {3, 4, 5, 6, 7, 8, 14, 19}; // Indices for integer settings
 
         // All engine parameters are now stored in the 'settings' vector.
         // Use engineSettingNames for mapping indices to names.
@@ -18,16 +19,16 @@ class Engine {
         parseEngineFile();
     }
     
-    void getAttributeList(std::map<std::string, std::string> &attributes) {
+    void getAttributeList(std::map<std::string, double> &attributes) {
         // Loop starting at index 1
         for (size_t i = 1; i < sizeof(engineSettingNames)/sizeof(engineSettingNames[0]); i++) {
-            attributes[engineSettingNames[i]] = std::to_string(settings[i]);
+            attributes[engineSettingNames[i]] = settings[i];
         }
     }
 
-    double getBoost() const {
+    double getBoost(const int rpm) const {
         // Assuming boost is stored at index 11 in settings
-        return settings[11];
+        return settings[11] * std::min(1.0, pow((rpm/settings[14]), settings[15]));
     }
 
     private:
@@ -136,21 +137,21 @@ class Engine {
             std::string itemname = engineSettingNames[item];
 
             // Create a new window for the menu (height, width, start_y, start_x)
-            WINDOW* win = newwin(10, 50, 5, 5);
+            WINDOW* win = newwin(10, 75, 5, 5);
             box(win, 0, 0);
             // Display the prompt and current value
             mvwprintw(win, 1, 2, "Modify setting for %s", itemname.c_str());
-            mvwprintw(win, 2, 2, "Current value: %.3f", settings[item]);
+            mvwprintw(win, 2, 2, "Current value: %g", settings[item]);
             mvwprintw(win, 3, 2, "Enter new value (or 'c' to cancel): ");
             wrefresh(win);
 
             // Get input from the user
-            char input[50];
-            wgetnstr(win, input, 50);
+            char input[10];
+            wgetnstr(win, input, 10);
             std::string strInput(input);
 
             if (strInput == "c" || strInput == "C") {
-                mvwprintw(win, 5, 2, "Modification cancelled.");
+                mvwprintw(win, 6, 2, "Modification cancelled.");
                 wrefresh(win);
                 getch();  // Wait for a key press before closing the window
                 delwin(win);
@@ -159,8 +160,16 @@ class Engine {
 
             try {
                 double newValue = std::stod(strInput);
-                settings[item] = newValue;
-                mvwprintw(win, 5, 2, "%s updated to %.3f", itemname.c_str(), settings[item]);
+                if (engineInts.contains(item) && newValue != static_cast<int>(newValue)) {
+                    settings[item] = static_cast<int>(newValue); // Round to nearest integer if setting is an integer
+                    mvwprintw(win, 6, 2, "Warning: Setting %s is an integer, rounding to %g", itemname.c_str(), settings[item]);
+                } else if (item == 16 && newValue != 0 && newValue != 1) {
+                    mvwprintw(win, 6, 2, "Warning: Setting %s is a boolean, enter value 0 or 1", itemname.c_str());
+                } else {
+                    settings[item] = newValue;
+                    mvwprintw(win, 6, 2, "%s updated to %g", itemname.c_str(), settings[item]);
+                }
+                
             } catch (const std::exception &e) {
                 mvwprintw(win, 5, 2, "Invalid input. Setting not modified.");
             }

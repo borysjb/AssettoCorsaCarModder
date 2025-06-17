@@ -4,8 +4,6 @@
 
 #include "menu_drawer/MainMenu.cpp"
 
-#define ACFOLDER "E:/games/SteamLibrary/steamapps/common/assettocorsa"
-
 int main() {
     std::filesystem::path path;
     path = "content";
@@ -21,7 +19,7 @@ int main() {
     curs_set(0);
     scrollok(win, TRUE);
     keypad(win, TRUE);
-    
+    echo();
     MainMenu menu(path, win);
     menu.draw();
 

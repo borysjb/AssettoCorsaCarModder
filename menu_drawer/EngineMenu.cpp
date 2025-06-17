@@ -7,7 +7,7 @@ class EngineMenu : public Menu {
         std::filesystem::path carpath;
         std::string carname;
         Engine engine; // Assuming Engine is a class that handles engine data
-        std::map<std::string, std::string> attributes;
+        std::map<std::string, double> attributes;
 
     public:
 
@@ -21,6 +21,7 @@ class EngineMenu : public Menu {
             for (const auto &[k,v]:attributes) {
                 items.push_back(k);
             }
+            items.push_back("tq");
         }
     protected:
         
@@ -33,10 +34,16 @@ class EngineMenu : public Menu {
         
         void printItems() override {
             for (int i = start; i < std::min(start + maxVisible, (int)items.size()); ++i) {
+                std::string name = engineSettingNames[i];
+                double value = attributes[name];
                 if (i == highlight) {
                     mvwprintw(win, i - start + 4, 1, "-->");
                 }
-                mvwprintw(win, i - start + 4, 5, "%s: %s", engineSettingNames[i].c_str(), attributes[engineSettingNames[i]].c_str());
+                if (i==0) {
+                    mvwprintw(win, i - start + 4, 5, "Torque curve editor.");
+                } else {
+                    mvwprintw(win, i - start + 4, 5, "%s: %g", name.c_str(), value);
+                }
             }
             printFooter(engineExplanations[engineSettingNames[highlight]]);
         }
