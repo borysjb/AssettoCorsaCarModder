@@ -31,15 +31,7 @@ protected:
         wprintw(win, "     --------------------------------------------------------\n");
     }
 
-    void handleInput(int ch) override {
-        if (ch == 10) { // Enter key
-            enterSubMenu();
-        } else {
-            Menu::handleInput(ch);
-        }
-    }
-
-    void enterSubMenu() {
+    void enter() {
         try {
             switch (highlight) {
                 case 0: // General Settings

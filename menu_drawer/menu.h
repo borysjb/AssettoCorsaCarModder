@@ -12,6 +12,7 @@ class Menu {
         int maxy, maxx;
         std::vector<std::string> items;
         WINDOW *win;
+        std::filesystem::path carpath;
     
     public:
         Menu(WINDOW *win) : win(win) {
@@ -47,8 +48,11 @@ class Menu {
                         exit = true;
                     }
                     break;
+                case 10: // Enter key
+                    enter();
+                    break;
                 default:
-                    printFooter("Input not recognized, key nr %d");
+                    printFooter("Input not recognized");
                     break;
             }
         }
@@ -67,6 +71,8 @@ class Menu {
                 }
             }
         }
+
+        virtual void enter() = 0;
 
         bool confirmExit() {
             wclear(win);

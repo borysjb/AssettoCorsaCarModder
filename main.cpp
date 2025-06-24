@@ -8,8 +8,8 @@ int main() {
     std::filesystem::path path;
     path = "content";
     path /= "cars";
+
     initscr();
-    noecho();
     cbreak();
     keypad(stdscr, TRUE);
     

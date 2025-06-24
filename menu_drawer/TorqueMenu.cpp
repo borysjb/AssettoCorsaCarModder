@@ -4,7 +4,6 @@
 
 class TorqueMenu : public Menu {
 private:
-    std::filesystem::path carpath;
     std::string carname;
     std::map<int, int> torqueCurve; // Map to hold the torque curve
     std::string torqueFile; // Name of the torque file
@@ -14,7 +13,8 @@ private:
 
 public:
     TorqueMenu(const std::filesystem::path &carpath, const std::string &carname, WINDOW *win, const Engine &eng)
-        : Menu(win), carpath(carpath), carname(carname), engine(eng) {
+        : Menu(win), carname(carname), engine(eng) {
+        this -> carpath = carpath; // Set the car path
         torqueFile = "power.lut"; // Default torque file name
         try {
             lutLoader(carpath / torqueFile, torqueCurve); // Load the torque curve from the file
@@ -79,12 +79,6 @@ public:
             case '3':
                 changeMode(2);
                 break;
-            case 10: // Enter key
-                if (highlight < items.size()) {
-                    int rpm = std::stoi(items[highlight]);
-                    modValue(rpm); // Modify the value for the selected RPM
-                }
-                break;
             case 's' || 'S':
                 try {
                     savePrompt();
@@ -97,6 +91,11 @@ public:
             default:
                 Menu::handleInput(ch);
         }
+    }
+
+    void enter() override {
+        int rpm = std::stoi(items[highlight]);
+        modValue(rpm); // Call the function to modify the value for the selected RPM
     }
 
     void modValue(int rpm) {

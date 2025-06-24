@@ -53,21 +53,6 @@ class EngineMenu : public Menu {
                 case 's':
                     confirmSave();
                     break;
-                case 10: //Enter key
-                    if(highlight == 0) {
-                        try {
-                            TorqueMenu torqueMenu(carpath, carname, win, engine);
-                            torqueMenu.draw();
-                        } catch (const std::exception &e) {
-                            printFooter(e.what());
-                            wrefresh(win);
-                            std::this_thread::sleep_for(std::chrono::seconds(1)); // Pause for 2 seconds
-                        }
-                    } else {
-                        engine.modValue(highlight); // -1 because first item is not a setting
-                        engine.getAttributeList(attributes); // Refresh attributes after modification
-                    }
-                    break;
                 default:
                     Menu::handleInput(ch);
             }
@@ -86,6 +71,22 @@ class EngineMenu : public Menu {
                 return;
             } else {
                 return confirmSave(); // Recursive call for invalid input
+            }
+        }
+
+        void enter() override {
+            if(highlight == 0) {
+                try {
+                    TorqueMenu torqueMenu(carpath, carname, win, engine);
+                    torqueMenu.draw();
+                } catch (const std::exception &e) {
+                    printFooter(e.what());
+                    wrefresh(win);
+                    std::this_thread::sleep_for(std::chrono::seconds(1)); // Pause for 2 seconds
+                }
+            } else {
+                engine.modValue(highlight); // -1 because first item is not a setting
+                engine.getAttributeList(attributes); // Refresh attributes after modification
             }
         }
 };
